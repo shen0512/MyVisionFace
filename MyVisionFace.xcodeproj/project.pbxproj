@@ -16,6 +16,8 @@
 		0956899A27FDCDC400C5F3DA /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 0956899927FDCDC400C5F3DA /* main.m */; };
 		095689A427FDCDC400C5F3DA /* MyVisionFaceTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 095689A327FDCDC400C5F3DA /* MyVisionFaceTests.m */; };
 		095689AF27FDCDC400C5F3DA /* MyVisionFaceUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 095689AE27FDCDC400C5F3DA /* MyVisionFaceUITests.m */; };
+		09D69C2B284B89F2001958D3 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 09D69C29284B89F2001958D3 /* README.md */; };
+		09D69C2C284B89F2001958D3 /* result.PNG in Resources */ = {isa = PBXBuildFile; fileRef = 09D69C2A284B89F2001958D3 /* result.PNG */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,6 +56,8 @@
 		095689AA27FDCDC400C5F3DA /* MyVisionFaceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MyVisionFaceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		095689AE27FDCDC400C5F3DA /* MyVisionFaceUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MyVisionFaceUITests.m; sourceTree = "<group>"; };
 		095689B027FDCDC400C5F3DA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		09D69C29284B89F2001958D3 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		09D69C2A284B89F2001958D3 /* result.PNG */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = result.PNG; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -84,6 +88,8 @@
 		0956897B27FDCDC300C5F3DA = {
 			isa = PBXGroup;
 			children = (
+				09D69C29284B89F2001958D3 /* README.md */,
+				09D69C2A284B89F2001958D3 /* result.PNG */,
 				0956898627FDCDC300C5F3DA /* MyVisionFace */,
 				095689A227FDCDC400C5F3DA /* MyVisionFaceTests */,
 				095689AD27FDCDC400C5F3DA /* MyVisionFaceUITests */,
@@ -241,7 +247,9 @@
 			files = (
 				0956899727FDCDC400C5F3DA /* LaunchScreen.storyboard in Resources */,
 				0956899427FDCDC400C5F3DA /* Assets.xcassets in Resources */,
+				09D69C2B284B89F2001958D3 /* README.md in Resources */,
 				0956899227FDCDC300C5F3DA /* Main.storyboard in Resources */,
+				09D69C2C284B89F2001958D3 /* result.PNG in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
