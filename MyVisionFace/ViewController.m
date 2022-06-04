@@ -18,7 +18,7 @@
 @property (nonatomic) BOOL faceDetectDone;
 @property (weak, nonatomic) IBOutlet UIImageView *imageView;
 @property (weak, nonatomic) IBOutlet UIImageView *drawView;
-
+@property (nonatomic) BOOL frontLens;
 @end
 
 @implementation ViewController
@@ -27,23 +27,31 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     
-    // view init
-    _imageView.transform = CGAffineTransformMakeScale(-1, 1);
-    _drawView.transform = CGAffineTransformMakeScale(-1, 1);
-    
-    //
-    [self cameraInit];
+    _faceDetectDone = YES;
     [self visionFaceInit];
+    [self cameraInit];
     
-    
-    [_captureSession startRunning];
 }
 
 # pragma mark init
 - (void)cameraInit{
-    AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionFront];
-    // Get an instance of the AVCaptureDeviceInput class using the previous device object.
-    AVCaptureDeviceInput *input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:nil];
+    /**
+     @biref camera init
+     */
+    AVCaptureDeviceInput *input;
+    if(_frontLens){
+        AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionFront];
+        input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:nil];
+        
+        _imageView.transform = CGAffineTransformMakeScale(-1, 1);
+        _drawView.transform = CGAffineTransformMakeScale(-1, 1);
+    }else{
+        AVCaptureDevice *captureDevice = [AVCaptureDevice defaultDeviceWithDeviceType:AVCaptureDeviceTypeBuiltInWideAngleCamera mediaType:AVMediaTypeVideo position:AVCaptureDevicePositionBack];
+        input = [AVCaptureDeviceInput deviceInputWithDevice:captureDevice error:nil];
+        
+        _imageView.transform = CGAffineTransformMakeScale(1, 1);
+        _drawView.transform = CGAffineTransformMakeScale(1, 1);
+    }
     
     // Initialize the captureSession object.
     _captureSession = [[AVCaptureSession alloc] init];
@@ -63,6 +71,9 @@
     
     // Create a new serial dispatch queue.
     [captureVideoDataOutput setSampleBufferDelegate:self queue:dispatch_queue_create("myQueue", NULL)];
+    
+    // start
+    [_captureSession startRunning];
 }
 
 - (void)visionFaceInit{
@@ -78,17 +89,22 @@
 //            dispatch_sync(dispatch_get_main_queue(), ^(){
 //                _drawView.image = nil;
 //            });
+//            UIImage *tmpCanvas = nil;
+//            if([observations count] > 0){
+//                VNFaceObservation *face = observations[0];
 //
-//            for (VNFaceObservation *face in observations) {
+//                tmpCanvas = [self createCanvas];
 //                CGRect rect = [self visonBbox2UIImageBbox:[face boundingBox]];
-//                dispatch_async(dispatch_get_main_queue(),^(){
-//                    _drawView.image = [self drawRect:rect];
-//                });
+//                tmpCanvas = [self drawRect:tmpCanvas :rect];
 //            }
+//
+//            dispatch_async(dispatch_get_main_queue(),^(){
+//                _drawView.image = tmpCanvas;
+//            });
+//
 //            _faceDetectDone = YES;
 //        });
 //    }];
-//    _faceDetectDone = YES;
     
     // bounding box + landmark
     _detectRequest = [[VNDetectFaceLandmarksRequest alloc] initWithCompletionHandler:^(VNRequest *request, NSError * _Nullable error) {
@@ -99,34 +115,37 @@
                 _drawView.image = nil;
             });
 
-            for (VNFaceObservation *face in observations) {
+            UIImage *tmpCanvas = nil;
+            if([observations count] > 0){
+                // only draw a face
+                VNFaceObservation *face = observations[0];
                 VNFaceLandmarkRegion2D* landmarks = face.landmarks.allPoints;
-                
-                UIImage *tmpCanvas = [self createCanvas];
+
+                tmpCanvas = [self createCanvas];
                 CGRect rect = [face boundingBox];
-                
+
                 // face bounding box
-                tmpCanvas = [self drawRect:[self visonBbox2UIImageBbox:rect]];
-                
+                tmpCanvas = [self drawRect:tmpCanvas :[self visonBbox2UIImageBbox:rect]];
+
                 // face landmark
                 for(int i=0; i<[landmarks pointCount]; i++){
                     CGPoint tmpPoint = [self visionPoint2UIImagePoint:rect :landmarks.normalizedPoints[i]];
                     tmpCanvas = [self drawPoint:tmpCanvas :CGPointMake(tmpPoint.x, tmpPoint.y)];
                 }
-                
-                //
-                dispatch_sync(dispatch_get_main_queue(), ^(){
-                    _drawView.image = tmpCanvas;
-                });
             }
+
+            // update drawView
+            dispatch_sync(dispatch_get_main_queue(), ^(){
+                _drawView.image = tmpCanvas;
+            });
+
             _faceDetectDone = YES;
         });
     }];
-    _faceDetectDone = YES;
+
 }
 
 # pragma mark delegate
-
 - (void)captureOutput:(AVCaptureOutput *)output didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection *)connection{
     
     dispatch_sync(dispatch_get_main_queue(), ^(){
@@ -149,8 +168,8 @@
 
 -(void)faceDetection:(UIImage*)image{
     /**
-     @ brief face detection
-     
+     @brief face detection
+     @param image
      */
     if(_faceDetectDone == YES){
         _faceDetectDone = NO;
@@ -172,6 +191,21 @@
 }
 
 # pragma mark other
+
+- (IBAction)changeLens:(UISwitch *)sender {
+    if([_captureSession isRunning]){
+        [_captureSession stopRunning];
+    }
+    
+    if(sender.isOn){
+        _frontLens = YES;
+    }else{
+        _frontLens = NO;
+    }
+    
+    [self cameraInit];
+}
+
 -(CVPixelBufferRef)pixelBufferFromCGImage: (CGImageRef)image{
     NSDictionary *options = @{
                               (NSString*)kCVPixelBufferCGImageCompatibilityKey : @YES,
@@ -213,9 +247,9 @@
 
 -(CGRect)visonBbox2UIImageBbox:(CGRect)bbox{
     /**
-     @ brief Vision 座標轉換成 UIImage 座標
-     @ param bbox vision bounding box result
-     @ return 轉換後的結果
+     @brief Vision 座標轉換成 UIImage 座標
+     @param bbox vision bounding box result
+     @return 轉換後的結果
      */
     CGFloat tlx = bbox.origin.x*_captureWidth;
     CGFloat tly = bbox.origin.y*_captureHeight;
@@ -225,14 +259,15 @@
     return CGRectMake(tlx, _captureHeight-height-tly, width, height);
 }
 
--(CGPoint)visionPoint2UIImagePoint:(CGRect)faceBbox :(CGPoint)point{
+-(CGPoint)visionPoint2UIImagePoint:(CGRect)bbox :(CGPoint)point{
     /**
-     @ brief Vision 座標轉換成 UIImage 座標
-     @ param bbox vision landmark result
-     @ return 轉換後的結果
+     @brief Vision 座標轉換成 UIImage 座標
+     ＠param bbox vision bounding box
+     @param point vision landmark result
+     @return 轉換後的結果
      */
-    float x = (point.x*faceBbox.size.width+faceBbox.origin.x)*_captureWidth;
-    float y = (1-(point.y*faceBbox.size.height+faceBbox.origin.y))*_captureHeight;
+    float x = (point.x*bbox.size.width+bbox.origin.x)*_captureWidth;
+    float y = (1-(point.y*bbox.size.height+bbox.origin.y))*_captureHeight;
     
     return CGPointMake(x, y);
     
@@ -240,8 +275,8 @@
 
 -(UIImage*)createCanvas{
     /**
-     @ brief 建立透明畫布
-     @ return 透明畫布
+     @brief 建立透明畫布
+     @return 透明畫布
      */
     UIGraphicsBeginImageContext(CGSizeMake(_captureWidth, _captureHeight));
     CGContextRef context = UIGraphicsGetCurrentContext();
@@ -254,20 +289,21 @@
     return result;
 }
 
--(UIImage*)drawRect:(CGRect)rect{
+-(UIImage*)drawRect:(UIImage*)canvas :(CGRect)rect{
     /**
-     @ brief 將矩形在畫布上
-     
+     @brief 將矩形在畫布上
+     @param canvas 畫布
+     @param rect 矩形
+     @return 畫矩形後的圖片
      */
     UIGraphicsBeginImageContext(CGSizeMake(_captureWidth, _captureHeight));
     
     // 設定透明背景
     CGContextRef context = UIGraphicsGetCurrentContext();
-    UIColor *bgColor = [UIColor colorWithWhite:1 alpha:1];
-    CGContextSetFillColorWithColor(context, bgColor.CGColor);
-    
+    [canvas drawAtPoint:CGPointMake(0, 0)];
+
     // 設定矩形線條寬度及線條顏色
-    [[UIColor greenColor] setStroke];
+    [[UIColor redColor] setStroke];
     CGContextSetLineWidth(context, 5);
     CGContextAddRect(context, rect);
     CGContextDrawPath(context, kCGPathStroke);
@@ -281,8 +317,10 @@
 
 -(UIImage*)drawPoint:(UIImage*)canvas :(CGPoint)point{
     /**
-     @ brief 將點畫在畫布上
-     
+     @brief 將點畫在畫布上
+     @param canvas 畫布
+     @param point 座標點
+     @return 畫座標點後的圖片
      */
     
     UIGraphicsBeginImageContext(CGSizeMake(_captureWidth, _captureHeight));
@@ -290,6 +328,7 @@
     // 設定透明背景
     CGContextRef context = UIGraphicsGetCurrentContext();
     [canvas drawAtPoint:CGPointMake(0, 0)];
+    
     // 設定矩形線條寬度及線條顏色
     [[UIColor greenColor] setStroke];
     CGContextSetLineWidth(context, 10);

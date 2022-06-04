@@ -22,18 +22,44 @@
                             <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="xtP-EA-thj">
                                 <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                             </imageView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="後鏡頭" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nSP-AV-msl">
+                                <rect key="frame" x="10" y="836" width="52" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="前鏡頭" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ERb-me-uex">
+                                <rect key="frame" x="125" y="836" width="52" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <nil key="textColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <switch opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" translatesAutoresizingMaskIntoConstraints="NO" id="dZu-S8-wGU">
+                                <rect key="frame" x="70" y="831" width="51" height="31"/>
+                                <connections>
+                                    <action selector="changeLens:" destination="BYZ-38-t0r" eventType="valueChanged" id="0e7-Bs-cG5"/>
+                                </connections>
+                            </switch>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="dZu-S8-wGU" firstAttribute="leading" secondItem="nSP-AV-msl" secondAttribute="trailing" constant="8" symbolic="YES" id="2C8-6E-nB2"/>
+                            <constraint firstItem="nSP-AV-msl" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" constant="10" id="6d3-wZ-fUB"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="nSP-AV-msl" secondAttribute="bottom" constant="5" id="78v-DL-UjI"/>
                             <constraint firstItem="vvw-N8-aWh" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="7wf-SD-VWr"/>
                             <constraint firstItem="vvw-N8-aWh" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="ApN-1F-cbi"/>
                             <constraint firstAttribute="bottom" secondItem="xtP-EA-thj" secondAttribute="bottom" id="H1E-hr-qje"/>
+                            <constraint firstItem="dZu-S8-wGU" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="QHl-FY-bso"/>
                             <constraint firstItem="vvw-N8-aWh" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="Qm1-3m-2rQ"/>
+                            <constraint firstItem="ERb-me-uex" firstAttribute="leading" secondItem="dZu-S8-wGU" secondAttribute="trailing" constant="6" id="VRw-6t-TXJ"/>
                             <constraint firstItem="xtP-EA-thj" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="VuW-qb-Fol"/>
+                            <constraint firstItem="dZu-S8-wGU" firstAttribute="leading" secondItem="nSP-AV-msl" secondAttribute="trailing" constant="8" symbolic="YES" id="WYW-b4-qfJ"/>
                             <constraint firstItem="xtP-EA-thj" firstAttribute="top" secondItem="8bC-Xf-vdC" secondAttribute="top" id="ecj-a6-TyI"/>
                             <constraint firstAttribute="bottom" secondItem="vvw-N8-aWh" secondAttribute="bottom" id="hZk-HZ-a76"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="bottom" secondItem="ERb-me-uex" secondAttribute="bottom" constant="5" id="kiA-MY-Ys4"/>
                             <constraint firstItem="xtP-EA-thj" firstAttribute="trailing" secondItem="6Tk-OE-BBY" secondAttribute="trailing" id="lgN-gx-O89"/>
+                            <constraint firstItem="ERb-me-uex" firstAttribute="leading" secondItem="dZu-S8-wGU" secondAttribute="trailing" constant="6" id="o4W-4q-TJT"/>
                         </constraints>
                     </view>
                     <connections>
